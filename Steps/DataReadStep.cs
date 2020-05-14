@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using ElasticImporter.Model;
+using Serilog;
 
 namespace ElasticImporter.Steps
 {
@@ -13,10 +14,10 @@ namespace ElasticImporter.Steps
             while((line = reader.ReadLine()) != null)
             {
                 var movie = Movie.CreateFromLine(line);
-                //Console.WriteLine($"{movie}");
                 
                 MovieRepository.Instance.Add(movie);
             }
+            Log.Information($"repository contains {MovieRepository.Instance.Count()}");
         }
 
         public string Name()

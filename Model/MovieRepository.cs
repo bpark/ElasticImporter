@@ -23,9 +23,14 @@ namespace ElasticImporter.Model
             this._movies.Add(movie);
         }
 
-        public IReadOnlyList<Movie> FindAll()
+        public IEnumerable<Movie> FindAll()
         {
             return _movies;
+        }
+
+        public int Count()
+        {
+            return _movies.Count;
         }
     }
 }
