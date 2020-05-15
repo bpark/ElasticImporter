@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ElasticImporter.Model;
 using Nest;
 using Serilog;
@@ -28,15 +27,18 @@ namespace ElasticImporter.Steps
 
             var batchNum = 0;
 
-            while (batchNum * BatchSize < MovieRepository.Instance.Count())
+            var batch = new List<Movie>();
+
+            foreach (var movie in movies)
             {
-                Log.Information($"indexing batch {batchNum}");
-                movies.Skip(BatchSize * batchNum);
-                var batch = movies.Take(BatchSize);
+                batch.Add(movie);
+                if (batch.Count != BatchSize) continue;
                 IndexBulk(batch);
-                batchNum++;
+                Log.Information($"indexing batch {batchNum++}");
+                batch.Clear();
             }
-            
+            Log.Information($"indexing last batch, items: {batch.Count}");
+            IndexBulk(batch);
         }
 
         public string Name()
